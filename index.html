@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html, body{
+            margin: 0;
+            padding: 0
+        }
+        #c-el {
+            height: 800px;
+            width: 800px;
+            margin: 20px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="c-el"></div>
+    <script src="./dist/js/bvas.js"></script>
+    <script>
+        let bvas = new Bvas({el: '#c-el'})
+        let layer = new Bvas.Layer()
+        layer.addTo(bvas)
+        function Particle() {
+            this.size = Math.random() * 10 + 2
+            this.speedX = Math.random() * 2 - 1
+            this.speedY = Math.random() * 2 - 1
+            this.x = Math.random() * (800 - 2 * this.size) + this.size
+            this.y = Math.random() * (800 - 2 * this.size) + this.size
+            this.cursor = ['pointer', 'crosshair', 'move', 'text', 'wait', 'help'][Math.round(Math.random() * 5)]
+            this.color = `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`
+        }
+        Particle.prototype.render = function () {
+            let {x, y, size, color, cursor} = this
+            this.point = new Bvas.Point({
+                style: {
+                    position: [x, y],
+                    size,
+                    color,
+                    cursor
+                }
+            }).addTo(layer)
+        }
+        Particle.prototype.move = function () {
+            if(this.x + this.size >= 800) {
+                this.speedX = -Math.abs(this.speedX)
+            }
+            if(this.x - this.size <= 0) {
+                this.speedX = Math.abs(this.speedX)
+            }
+            if(this.y + this.size >= 800) {
+                this.speedY = -Math.abs(this.speedY)
+            }
+            if(this.y - this.size <= 0) {
+                this.speedY = Math.abs(this.speedY)
+            }
+            this.x += this.speedX
+            this.y += this.speedY
+            this.point.setStyle({
+                position: [this.x, this.y]
+            }, false)
+        }
+        let particles = []
+        for(let i = 0; i < 100; i++) {
+            particles.push(new Particle())
+        }
+        particles.forEach(p => {
+            p.render()
+            // p.move()
+        })
+
+        function move() {
+            particles.forEach(p => {
+                p.move()
+            })
+            bvas._render()
+            requestAnimationFrame(move)
+        }
+
+        move()
+    </script>
+</body>
+
+</html>
