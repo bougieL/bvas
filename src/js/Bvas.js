@@ -1,4 +1,4 @@
-import {isPointInShape} from './util/isPointInShape'
+// import {isPointInShape} from './util/isPointInShape'
 
 function addClass(el, className) {
     el
@@ -8,8 +8,6 @@ function addClass(el, className) {
 
 export default class Bvas {
     constructor({el, disableCursor, disableEvents}) {
-        this.$disableCursor = disableCursor
-        this.$disableEvents = disableEvents
         this.$el = document.querySelector(el)
         this.$canvas = document.createElement('canvas')
         this.$canvas.width = this.$el.offsetWidth
@@ -23,6 +21,9 @@ export default class Bvas {
             .$el
             .append(this.$canvas)
         this.$layers = []
+        if(!disableCursor) {
+            this.$canvas.addEventListener('mousemove', this._cursor.bind(this))
+        }
     }
     addLayer(layer, rerender = true) {
         this
@@ -54,52 +55,76 @@ export default class Bvas {
             .sort((a, b) => a.$style.zIndex - b.$style.zIndex)
     }
     _cursor(e) {
+        this.clear()
         let cursor = null
-        breakPoint:
-        for(let i = this.$layers.length - 1; i > -1; i--) {
-            let layer = this.$layers[i]
-            for(let j = layer.$shapes.length - 1; j > -1; j--) {
-                let shape = layer.$shapes[j]
-                if(shape.$style.cursor) {
-                    if(isPointInShape([e.offsetX, e.offsetY], shape)) {
-                        cursor = shape.$style.cursor
-                        break breakPoint
-                    }
+        // breakPoint:
+        // for(let i = this.$layers.length - 1; i > -1; i--) {
+        //     let layer = this.$layers[i]
+        //     for(let j = layer.$shapes.length - 1; j > -1; j--) {
+        //         let shape = layer.$shapes[j]
+        //         if(shape.$style.cursor) {
+        //             if(isPointInShape([e.offsetX, e.offsetY], shape)) {
+        //                 cursor = shape.$style.cursor
+        //                 break breakPoint
+        //             }
+        //         }
+        //     }
+        // }
+        this._sort()
+        this.$layers.forEach(layer => {
+            layer._sort()
+            layer.$shapes.forEach(shape => {
+                shape._render()
+                if(this.$ctx.isPointInPath(e.offsetX, e.offsetY, 'evenodd')) {
+                    cursor = shape.$style.cursor
                 }
-            }
-        }
+                
+            })
+        })
         this.$canvas.style.cursor = cursor
     }
     _events() {
-        for(let i = this.$layers.length - 1; i > -1; i--) {
-            let layer = this.$layers[i]
-            for(let j = layer.$shapes.length - 1; j > -1; j--) {
-                let shape = layer.$shapes[j]
-                shape.$events.forEach(event => {
-                    function func(e) {
-                        if(isPointInShape([e.offsetX, e.offsetY], shape)) {
-                            event.fn(shape, e)
-                        }
-                    }
-                    this.$canvas.removeEventListener(event.evType, func)
-                    this.$canvas.addEventListener(event.evType, func)
-                })
+        this._sort()
+        this.$layers.forEach(layer => {
+            layer._sort()
+            layer.$shapes.forEach(shape => {
+                shape._render()
+                if(this.$ctx.isPointInPath(e.offsetX, e.offsetY)) {
+                    cursor = shape.$style.cursor
+                }
                 
-            }
-        }
+            })
+        })
+        this.$canvas.style.cursor = cursor
+        // for(let i = this.$layers.length - 1; i > -1; i--) {
+        //     let layer = this.$layers[i]
+        //     for(let j = layer.$shapes.length - 1; j > -1; j--) {
+        //         let shape = layer.$shapes[j]
+        //         shape.$events.forEach(event => {
+        //             function func(e) {
+        //                 if(isPointInShape([e.offsetX, e.offsetY], shape)) {
+        //                     event.fn(shape, e)
+        //                 }
+        //             }
+        //             this.$canvas.removeEventListener(event.evType, func)
+        //             this.$canvas.addEventListener(event.evType, func)
+        //         })
+        //     }
+        // }
     }
     _render() {
         this.clear()
+        this._sort()
         this.$layers.forEach(layer => {
             layer._render()
         })
-        if(!this.$disableEvents) {
-            this._events()
-        }
+        // if(!this.$disableEvents) {
+        //     this._events()
+        // }
         
-        if(!this.$disableCursor) {
-            this.$canvas.removeEventListener('mousemove', this._cursor.bind(this))
-            this.$canvas.addEventListener('mousemove', this._cursor.bind(this))
-        }
+        // if(!this.$disableCursor) {
+        //     this.$canvas.removeEventListener('mousemove', this._cursor.bind(this))
+        //     this.$canvas.addEventListener('mousemove', this._cursor.bind(this))
+        // }
     }
 }

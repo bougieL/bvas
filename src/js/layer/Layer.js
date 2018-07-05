@@ -11,7 +11,8 @@ export default class Layer {
         this.$canvas = bvas.$canvas
         this.$ctx = bvas.$ctx
         this.$bvas = bvas
-        bvas.addLayer(this, rerender = true)
+        bvas.addLayer(this, rerender)
+        return this
     }
     addShape(shape, rerender = true) {
         this.$bvas.removeLayer(this, false)
@@ -19,13 +20,19 @@ export default class Layer {
             .$shapes
             .push(shape)
         this.$bvas.addLayer(this, rerender)
+        return this
     }
     removeShape(shape, rerender = true) {
         this.$bvas.removeLayer(this, false)
         this.$shapes = this.$shapes.filter(shapeI => {
             return shapeI !== shape
         })
-        this.$bvas.addLayer(this, rerender)
+        this.$bvas.addLayer(this, rerender) 
+        return this
+    }
+    remove(rerender = true) {
+        this.$bvas.removeLayer(this, rerender)
+        return this
     }
     _sort() {
         this

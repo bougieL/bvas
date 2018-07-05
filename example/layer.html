@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html, body, div{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #box{
+            position: absolute;
+        }
+        button{
+            position: absolute;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id='box'></div>
+    <button>remove backgound layer</button>
+    <script src="../dist/js/bvas.js"></script>
+    <script>
+        let bvas = new Bvas({el: '#box'})
+        // background layer
+        let bgLayer = new Bvas.Layer({
+            style: {
+                zIndex: 0
+            }
+        }).addTo(bvas)
+
+        // foreground layer
+        let fgLayer = new Bvas.Layer({
+            style: {
+                zIndex: 1
+            }
+        }).addTo(bvas)
+        let p2 = new Bvas.Point({
+            style: {
+                position: [150, 150],
+                size: 100,
+                color: 'green'
+            }
+        }).addTo(fgLayer)
+        let p1 = new Bvas.Point({
+            style: {
+                position: [100, 100],
+                size: 100
+            }
+        }).addTo(bgLayer)
+
+        let isBgRemoved = false
+        document.querySelector('button').addEventListener('click', function () {
+            this.innerHTML = isBgRemoved ? 'remove background layer' : 'add background layer'
+            isBgRemoved ? bgLayer.addTo(bvas) : bgLayer.remove()
+            isBgRemoved = !isBgRemoved
+        })
+    </script>
+</body>
+</html>

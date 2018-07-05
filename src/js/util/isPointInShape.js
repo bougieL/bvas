@@ -2,6 +2,8 @@ import {getBoundFromCoordinates, getCircleBound} from './bound'
 
 import {pointDistance} from './distance'
 
+import * as shapes from '../shape/index'
+
 // http://www.html-js.com/article/1528
 
 /**
@@ -21,7 +23,7 @@ export function isPointInPolygon(p, poly) {
             ty = poly[j][1]
         // 点与多边形顶点重合
         if ((sx === px && sy === py) || (tx === px && ty === py)) {
-            return 'on'
+            flag = true
         }
         // 判断线段两端点是否在射线两侧
         if ((sy < py && ty >= py) || (sy >= py && ty < py)) {
@@ -29,7 +31,7 @@ export function isPointInPolygon(p, poly) {
             let x = sx + (py - sy) * (tx - sx) / (ty - sy)
             // 点在多边形的边上
             if (x === px) {
-                return 'on'
+                flag = true
             }
             // 射线穿过多边形的边界
             if (x > px) {
@@ -134,14 +136,41 @@ export function isPointInCircle(p, circle) {
     }
 }
 
+export function getShapeBound(shape) {
+    if(shape instanceof shapes.Point) {
+        let {position, size} = shape.$style
+        let [x, y] = position
+        return [[x - size, y - size], [x + size, y + size]]
+    }
+    if(shape instanceof shapes.Circle) {
+        let {position, radius} = shape.$style
+        let [x, y] = position
+        return [[x - radius, y - radius], [x + radius, y + radius]]
+    }
+    if(shape instanceof shapes.PolyLine || shape instanceof shapes.PolyGon) {
+        let {points} = shape.$style
+        return getBoundFromCoordinates(points)
+    }
+}
+
 export function isPointInShape(p, shape) {
-    let type = shape.constructor.name
+    // let type = shape.constructor.name
+    // alert(type)
     // console.log(type)
-    if (type === 'Point') {
+    if (shape instanceof shapes.Point) {
         let {position, size} = shape.$style
         let circle = {
             position,
             radius: size
+        }
+        // console.log(p, circle)
+        return isPointInCircle(p, circle)
+    }
+    if (shape instanceof shapes.Circle) {
+        let {position, radius} = shape.$style
+        let circle = {
+            position,
+            radius
         }
         // console.log(p, circle)
         return isPointInCircle(p, circle)

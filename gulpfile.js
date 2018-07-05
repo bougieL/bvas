@@ -1,10 +1,11 @@
 const gulp = require('gulp')
 const path = require('path')
 const babel = require('rollup-plugin-babel')
-const sourcemaps = require('gulp-sourcemaps')
+// const sourcemaps = require('gulp-sourcemaps')
 const rollup = require('rollup')
+
 const webserver = require('gulp-webserver')
-const rename = require('gulp-rename')
+// const rename = require('gulp-rename')
 const {uglify} = require('rollup-plugin-uglify')
 const commonjs = require('rollup-plugin-commonjs')
 const rollupResolve = require('rollup-plugin-node-resolve')

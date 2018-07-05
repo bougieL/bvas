@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        html, body{
+        html, body, div{
             margin: 0;
-            padding: 0
-        }
-        #c-el {
-            height: 800px;
-            width: 800px;
-            /* margin: 20px; */
-            border: 1px solid #333;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+        }
+        #box{
+            position: absolute;
+        }
+        button{
+            position: absolute;
+            right: 0;
+            top: 0;
+            cursor: pointer;
         }
     </style>
 </head>
-
 <body>
-    <div id="c-el"></div>
-    <script src="./dist/js/bvas.js"></script>
+    <div id='box'></div>
+    <button>红色圆圈有点击事件，黄色圆圈鼠标按住可移动</button>
+    <!-- <script src="../dist/js/bvas.js"></script> -->
+    <script src="https://www.bougieblog.cn/bvas.min.js"></script>
     <script>
-        let bvas = new Bvas({el: '#c-el'})
+        let bvas = new Bvas({el: '#box'})
         let layer = new Bvas.Layer().addTo(bvas)
         let p1 = new Bvas.Point({
             style: {
@@ -33,7 +38,7 @@
                 size: 50,
                 color: 'green',
                 zIndex: 1,
-                cursor: 'pointer'
+                cursor: 'text'
             }
         }).addTo(layer)
         let p2 = new Bvas.Point({
@@ -42,9 +47,11 @@
                 size: 20,
                 color: 'red',
                 zIndex: 2,
-                cursor: 'text'
+                cursor: 'pointer'
             }
-        }).addTo(layer)
+        }).addTo(layer).on('click', function() {
+            alert('点击了红色圆圈')
+        })
         let c1 = new Bvas.Circle({
             style: {
                 position: [200, 200],
@@ -75,30 +82,7 @@
                 zIndex: 0
             })
         }
-        document.querySelector('#c-el').addEventListener('mousemove', move)
-        // let l1 = new Bvas.PolyLine({
-        //     style: {
-        //         points: [[100, 100], [200, 400], [800, 600]],
-        //         strokeStyle: 'red',
-        //         // strokeWidth: 7,
-        //         // cursor: 'pointer',
-        //         zIndex: 1
-        //     }
-        // }).addTo(layer)
-        p1.on('click', function(a, b) {
-            console.log(a,b)
-        })
-        let pg1 = new Bvas.PolyGon({
-            style: {
-                points: [[100, 100], [400, 100], [400, 300], [100, 300]],
-                strokeStyle: 'red',
-                // strokeWidth: 7,
-                cursor: 'pointer',
-                zIndex: 1,
-                // rotate: Math.PI / 20
-            }
-        }).addTo(layer)
+        document.querySelector('#box').addEventListener('mousemove', move)
     </script>
 </body>
-
 </html>

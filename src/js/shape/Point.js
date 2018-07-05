@@ -1,65 +1,8 @@
-// import {pointDistance} from '../util/distance'
-import {isPointInShape} from '../util/isPointInShape'
+import Base from './Base'
 
-export default class Point {
-    constructor({style, props}) {
-        this.$style = style
-        this.$props = props
-        this.$layer = null
-        this.$ctx = null
-        this.$canvas = null
-        this.$bvas = null
-        this.$events = []
-    }
-    addTo(layer, rerender = true) {
-        this.$canvas = layer.$canvas
-        this.$layer = layer
-        this.$ctx = layer.$ctx
-        this.$bvas = layer.$bvas
-        layer.addShape(this, rerender)
-        return this
-    }
-    setStyle(style, rerender = true) {
-        this
-            .$layer
-            .removeShape(this, false)
-        Object.assign(this.$style, style)
-        this
-            .$layer
-            .addShape(this, rerender)
-        return this
-    }
-    on(evType, fn) {
-        let func = (e) => {
-            if(isPointInShape([e.offsetX, e.offsetY], this)) {
-                fn(this, e)
-            }
-        }
-        this.$events.push({
-            evType,
-            func,
-            fn
-        })
-        this.$canvas.addEventListener(evType, func)
-        // this.$bvas._events()
-    }
-    un(evType, fn) {
-        this.$events = this.$events.filter(event => {
-            if(event.evType === evType && event.fn === fn) {
-                this.$canvas.removeEventListener(evType, event.func)
-                return true
-            }
-        })
-    }
-    remove() {
-        this
-            .$layer
-            .removeShape(this)
-    }
-    _render() {
-        let {position, size, color, cursor} = this.$style
-        size = size || 2
-        color = color || '#000'
+export default class Point extends Base{
+    _render() { 
+        let {position, size = 2, color = '#000'} = this.$style
         this
             .$ctx
             .beginPath()
