@@ -4,12 +4,12 @@ A canvas extension library
 # Use
 * insert into head tag
 ```html
-<script src='./js/tinyJquery.min.js'></script>
+<script src='./js/bvas.min.js'></script>
 ```
 or
-* import in commonJs
+* import in commonJs/ES6 module
 ```javascript
-import $ from './js/tinyJquery.min.js'
+import Bvas from './js/bvas.min.js'
 ```
 
 # Characteristics
